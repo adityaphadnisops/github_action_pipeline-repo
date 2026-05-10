@@ -1,0 +1,54 @@
+name: Deploy to Dev and Staging
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  security-scan:
+    name: Security scan with Trivy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+
+  deploy-dev:
+    name: Deploy to Dev
+    needs: security-scan
+    runs-on: ubuntu-latest
+    environment: dev   # optional, for dev-specific secrets
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Dev environment
+        run: ./deploy.sh dev
+        env:
+          # Credentials injected from GitHub Secrets – no plaintext
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DEPLOY_API_KEY: ${{ secrets.DEV_DEPLOY_API_KEY }}
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: security-scan
+    runs-on: ubuntu-latest
+    environment: staging   # manual approval configured here
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Staging environment
+        run: ./deploy.sh staging
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DEPLOY_API_KEY: ${{ secrets.STAGING_DEPLOY_API_KEY }}
