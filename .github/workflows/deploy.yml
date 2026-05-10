@@ -29,11 +29,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Make deploy script executable
-        run: chmod +x deploy.sh
-
       - name: Deploy to Dev environment
-        run: ./deploy.sh dev
+        run: bash deploy.sh dev
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID || 'dummy' }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY || 'dummy' }}
@@ -48,11 +45,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Make deploy script executable
-        run: chmod +x deploy.sh
-
       - name: Deploy to Staging environment
-        run: ./deploy.sh staging
+        run: bash deploy.sh staging
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID || 'dummy' }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY || 'dummy' }}
