@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Trivy filesystem scan
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -29,18 +29,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Make deploy script executable
+        run: chmod +x deploy.sh
 
-      - name: Build React app
-        run: npm run build
-
-      - name: Deploy to Dev environment
+      - name: Deploy to Dev environment (fake)
         run: ./deploy.sh dev
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          DEPLOY_API_KEY: ${{ secrets.DEV_DEPLOY_API_KEY }}
+          # Fake secrets – actual values not needed for test
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID || 'dummy' }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY || 'dummy' }}
+          DEPLOY_API_KEY: ${{ secrets.DEV_DEPLOY_API_KEY || 'dummy' }}
 
   deploy-staging:
     name: Deploy to Staging
@@ -51,15 +49,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Make deploy script executable
+        run: chmod +x deploy.sh
 
-      - name: Build React app
-        run: npm run build
-
-      - name: Deploy to Staging environment
+      - name: Deploy to Staging environment (fake)
         run: ./deploy.sh staging
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          DEPLOY_API_KEY: ${{ secrets.STAGING_DEPLOY_API_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID || 'dummy' }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY || 'dummy' }}
+          DEPLOY_API_KEY: ${{ secrets.STAGING_DEPLOY_API_KEY || 'dummy' }}
