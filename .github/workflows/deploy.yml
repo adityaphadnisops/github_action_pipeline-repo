@@ -24,15 +24,20 @@ jobs:
     name: Deploy to Dev
     needs: security-scan
     runs-on: ubuntu-latest
-    environment: dev   # optional, for dev-specific secrets
+    environment: dev
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build React app
+        run: npm run build
+
       - name: Deploy to Dev environment
         run: ./deploy.sh dev
         env:
-          # Credentials injected from GitHub Secrets – no plaintext
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           DEPLOY_API_KEY: ${{ secrets.DEV_DEPLOY_API_KEY }}
@@ -41,10 +46,16 @@ jobs:
     name: Deploy to Staging
     needs: security-scan
     runs-on: ubuntu-latest
-    environment: staging   # manual approval configured here
+    environment: staging
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build React app
+        run: npm run build
 
       - name: Deploy to Staging environment
         run: ./deploy.sh staging
