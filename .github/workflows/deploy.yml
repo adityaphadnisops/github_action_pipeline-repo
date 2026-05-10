@@ -32,10 +32,9 @@ jobs:
       - name: Make deploy script executable
         run: chmod +x deploy.sh
 
-      - name: Deploy to Dev environment (fake)
+      - name: Deploy to Dev environment
         run: ./deploy.sh dev
         env:
-          # Fake secrets – actual values not needed for test
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID || 'dummy' }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY || 'dummy' }}
           DEPLOY_API_KEY: ${{ secrets.DEV_DEPLOY_API_KEY || 'dummy' }}
@@ -52,7 +51,7 @@ jobs:
       - name: Make deploy script executable
         run: chmod +x deploy.sh
 
-      - name: Deploy to Staging environment (fake)
+      - name: Deploy to Staging environment
         run: ./deploy.sh staging
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID || 'dummy' }}
